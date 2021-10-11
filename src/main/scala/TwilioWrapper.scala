@@ -14,10 +14,10 @@ class TwilioWrapper(
 ) {
   Twilio.init(twilioConfig.accountSid, twilioConfig.autoToken)
 
-  def sendMessage(): Unit = {
+  def sendMessage(storesInStock: Seq[String]): Unit = {
     val from = new PhoneNumber(twilioConfig.twilioPhoneNumber)
     val to = new PhoneNumber(twilioConfig.outboundPhoneNumber)
-    val body = "BUY THE GRAPHICS CARD RIGHT NOW"
+    val body = storesInStock.mkString("\n\n")
 
     Message.creator(to, from, body).create()
   }

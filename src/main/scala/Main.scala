@@ -1,33 +1,24 @@
-import Wiring.{stockChecker, twilio}
+import Wiring.{rtx3080StockChecker, twilio}
 
 import scala.util.{Failure, Success}
 
-case class Product(
-  name: String,
-  url: String,
-  cssSelector: String
-)
-
 object Main extends App {
-  val url = "https://www.bestbuy.com/site/nvidia-geforce-rtx-3080-10gb-gddr6x-pci-express-4-0-graphics-card-titanium-and-black/6429440.p?skuId=6429440"
-  val css = "button.add-to-cart-button"
   val SLEEP_TIME_SECONDS = 2 * 60
-  val product = Product("rtx 3080", url, css)
 
   while (true) {
-    val tryIsInStock = stockChecker.hasStock(product)
+    val tryIsInStock = rtx3080StockChecker.hasStock()
 
-    val isInStock = tryIsInStock match {
+    val storesInStock: Seq[String] = tryIsInStock match {
       case Failure(exception) => {
         println("Failed checking stock")
-        println(exception.printStackTrace)
-        false
+        println(exception.printStackTrace())
+        Seq()
       }
       case Success(value) => value
     }
 
-    if (isInStock) {
-      twilio.sendMessage()
+    if (storesInStock.nonEmpty) {
+      twilio.sendMessage(storesInStock)
     } else {
       println("Unfortunately not :(")
     }
