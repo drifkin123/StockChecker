@@ -1,11 +1,10 @@
-import domain.{Product, ProductLocation}
+import Products.Rtx3080._
 
 object Wiring {
-  println(sys.env)
-  val ACCOUNT_SID = "ACb7471bd44057d5a044a05ae943ebc7a5"
-  val AUTH_TOKEN = "7b49604d801c8ee1e38505c33745a2b2"
-  val TWILIO_PHONE_NUMBER = "+12704798203"
-  val OUTBOUND_NUMBER = "+18186655087"
+  val ACCOUNT_SID: String = sys.env.getOrElse("ACCOUNT_SID", "")
+  val AUTH_TOKEN: String = sys.env.getOrElse("AUTH_TOKEN", "")
+  val TWILIO_PHONE_NUMBER: String = sys.env.getOrElse("TWILIO_PHONE_NUMBER", "")
+  val OUTBOUND_NUMBER: String = sys.env.getOrElse("OUTBOUND_NUMBER", "")
 
   val twilioConfig: TwilioConfig = TwilioConfig(
     ACCOUNT_SID,
@@ -15,25 +14,6 @@ object Wiring {
   )
 
   val twilio = new TwilioWrapper(twilioConfig)
-
-  val bestBuyRtx3080: ProductLocation = ProductLocation(
-    "bestBuy",
-    "https://www.bestbuy.com/site/nvidia-geforce-rtx-3080-10gb-gddr6x-pci-express-4-0-graphics-card-titanium-and-black/6429440.p?skuId=6429440",
-    "button.add-to-cart-button",
-    "Add to Cart"
-  )
-
-  val newEggRtx3080: ProductLocation = ProductLocation(
-    "newEgg",
-    "https://www.newegg.com/msi-geforce-rtx-3080-rtx-3080-ventus-3x-10g/p/N82E16814137600?Item=N82E16814137600&quicklink=true",
-    "#ProductBuy button.btn-wide",
-    "Add to cart"
-  )
-
-  val rtx3080: Product = Product(
-    "rtx3080",
-    Seq(bestBuyRtx3080, newEggRtx3080)
-  )
 
   val rtx3080StockChecker = new StockChecker(rtx3080)
 }
