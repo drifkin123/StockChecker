@@ -17,7 +17,8 @@ class TwilioWrapper(
   def sendMessage(storesInStock: Seq[String]): Unit = {
     val from = new PhoneNumber(twilioConfig.twilioPhoneNumber)
     val to = new PhoneNumber(twilioConfig.outboundPhoneNumber)
-    val body = storesInStock.mkString("\n\n")
+    val stores = storesInStock.mkString("\n\n")
+    val body = s"ITS IN STOCK BABY: ${stores}"
 
     Message.creator(to, from, body).create()
   }

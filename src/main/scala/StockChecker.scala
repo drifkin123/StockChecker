@@ -20,7 +20,6 @@ class StockChecker(product: Product) {
       } else {
         (false, productLocation.url)
       }
-
     })
       .filter {
         case (inStock, _) => inStock

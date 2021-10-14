@@ -1,6 +1,7 @@
 import domain.{Product, ProductLocation}
 
 object Wiring {
+  println(sys.env)
   val ACCOUNT_SID = "ACb7471bd44057d5a044a05ae943ebc7a5"
   val AUTH_TOKEN = "7b49604d801c8ee1e38505c33745a2b2"
   val TWILIO_PHONE_NUMBER = "+12704798203"
@@ -26,7 +27,7 @@ object Wiring {
     "newEgg",
     "https://www.newegg.com/msi-geforce-rtx-3080-rtx-3080-ventus-3x-10g/p/N82E16814137600?Item=N82E16814137600&quicklink=true",
     "#ProductBuy button.btn-wide",
-    "Add to cart "
+    "Add to cart"
   )
 
   val rtx3080: Product = Product(
