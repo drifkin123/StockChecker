@@ -1,4 +1,5 @@
 # Stock Checker
+hi
 
 This project (currently in its infant stage) will check the stock of the given products, and notify the user when the item(s) are in stock. 
 
