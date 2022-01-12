@@ -1,13 +1,24 @@
 package domain
 
-case class ProductLocation(
-  store: String,
-  url: String,
-  cssSelector: String,
-  textComparator: String
-)
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 
-case class Product(
-  name: String,
-  productLocations: Seq[ProductLocation]
-)
+trait Product {
+    val name: String
+    val url: String
+
+    def isInStock(doc: Document): Boolean
+}
+
+class BestBuyProduct(
+    val name: String,
+    val url: String
+) extends Product {
+    val cssSelector: String = "button.add-to-cart-button"
+    val textComparator: String = "Add to Cart"
+
+    override def isInStock(doc: Document): Boolean = {
+        val buttons: Elements = doc.select(cssSelector)
+        buttons.size() > 0 && buttons.first().text() == textComparator
+    }
+}
