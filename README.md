@@ -15,6 +15,7 @@ Build a fat jar by running `sbt assmbly` in the root directory. This will create
 > ### OR
 
 There is an already built fat jar [here](build/WebsiteStockNotifier.jar)
+> Works with openjdk version "1.8.0_242"
 
 #### Create text file with list of product names to urls
 The text file that the program will read should have the format of the product name and url to the products location separated by !:
