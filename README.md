@@ -21,11 +21,7 @@ The text file that the program will read should have the format of the product n
 ```
 ${product_name}!${url}
 ```
-Ex:
-```
-RTX 3070!https://www.example.com/rtx-3080
-RTX 3060 ti!https://www.example.com/rtx-3060-ti
-```
+Example product file [here](src/main/resources/products)
 
 To determine the url to enter (CURRENTLY ONLY SUPPORTS BEST BUY WEBSITE), go to the website page where the `Add to Cart` button is shown. But in our case, it will be `Sold Out` (In best buy's sake)
 
