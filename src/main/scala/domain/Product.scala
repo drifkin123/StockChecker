@@ -10,7 +10,7 @@ trait Product {
     def isInStock(doc: Document): Boolean
 }
 
-class BestBuyProduct(
+class BestBuyProduct (
     val name: String,
     val url: String
 ) extends Product {

@@ -4,6 +4,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
+import web.JsoupWrapper
 
 import scala.io.{BufferedSource, Source}
 
@@ -100,17 +101,6 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
 
         // then
         fixture.fakeMessenger.messageSent shouldBe ""
-    }
-
-    // TODO: Implement before passing down to stock checker
-    test("Based on domain, determine which product objects to create") {
-        // Have product page with list of urls (only best buy and newegg) to check
-        // if in stock
-    }
-
-    // TODO: Read url's from text file to scrape
-    test("Fail with message to user to add page with urls if not there or empty") {
-
     }
 
     class FakeMessenger extends Messenger {
