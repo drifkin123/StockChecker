@@ -21,7 +21,11 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
         val tryIsInStock = hasStock
 
         tryIsInStock match {
-            case Failure(exception) => println(s"Failed checking stock: ${exception.getMessage}")
+            case Failure(exception) => {
+                println(s"Failed checking stock: ${exception.getMessage}\nWaiting 5 seconds")
+
+                Thread.sleep(5000L)
+            }
             case Success(maybeMessage) => maybeMessage.foreach(messenger.sendMessage)
         }
 
@@ -31,14 +35,20 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
     private def hasStock: Try[Option[String]] = Try {
 
         val productsInStock: Seq[Product] = products.flatMap(product => {
-            println(s"Checking for ${product.name}...")
+            print(s"Checking for ${product.name}...")
 
             val doc = jsoupWrapper.connectAndGet(product.url)
 
             val randomTime = r.nextLong(MAX_SLEEP_TIME_BETWEEN_REQUESTS) + MIN_SLEEP_TIME_BETWEEN_REQUESTS
             Thread.sleep(randomTime)
 
-            if (product.isInStock(doc)) Some(product) else None
+            if (product.isInStock(doc)) {
+                println(s"${Console.GREEN} ITS IN STOCK!! CHECK YOUR PHONE!!${Console.RESET}")
+                Some(product)
+            } else {
+                println(s"❌")
+                None
+            }
         })
 
 
