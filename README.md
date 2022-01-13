@@ -1,13 +1,20 @@
 # Stock Checker
-hi
+With the current graphics card shortage, one can only dream of getting their hands on a shiny RTX 3080... for msrp.
+Until now! 
 
-This project (currently in its infant stage) will check the stock of the given products, and notify the user when the item(s) are in stock. 
+This program will check (currently only Best Buy's products) the stock of the given URLs every 10 seconds (approximately), and if the item is in stock then you will receive a text message with the url to buy the product.
 
-## Installation
+This program does NOT checkout for you... it simply lets you know if an item is in stock
 
-Set up a free account with [Twilio](https://www.twilio.com/)
+## Setup
 
-Install [sbt](https://www.scala-sbt.org/) (Scala Build Tool)
+In order to recieve texts, set up a [Twilio](https://www.twilio.com/) account.
+
+Build a fat jar by running `sbt assmbly` in the root directory. This will create a jar in `target/scala-2.13/WebsiteStockNotifier.jar`
+
+> ### OR
+
+There is an already build fat jar [here](build/WebsiteStockNotifier.jar)
 
 ## Usage
 
@@ -17,9 +24,9 @@ export ACCOUNT_SID=ACCOUNT_SID_FROM_TWILIO
 export AUTH_TOKEN=AUTH_TOKEN_FROM_TWILIO
 export TWILIO_PHONE_NUMBER=TWILIO_PHONE_NUMBER_FROM_TWILIO
 export OUTBOUND_NUMBER=PHONE_NUMBER_TO_NOTIFY
+java -jar WebsiteStockNotifier.jar
 ```
 
-In terminal, go to `Main.scala` location
-```
-sbt run
-```
+And let it do it's thing!
+
+
