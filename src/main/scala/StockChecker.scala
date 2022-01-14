@@ -2,6 +2,8 @@ import Messenger.Messenger
 import domain.Product
 import web.JsoupWrapper
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.{Failure, Random, Success, Try}
 
 class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: Seq[Product]) {
@@ -12,13 +14,21 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
     val r: Random.type = scala.util.Random
 
     def checkLooped(): Unit = {
-        while (true) {
-            check()
-        }
+        val groupedProducts = products.groupBy(_.company).toSeq.map(_._2)
+        groupedProducts.foreach(innerProducts => {
+            println(s"Start checking for ${innerProducts.head.company} products (${innerProducts.length} products)")
+            Future {
+                while (true) {
+                    check(innerProducts)
+                }
+            }
+        })
+
+        Thread.sleep(Long.MaxValue)
     }
 
-    def check(): Unit = {
-        val tryIsInStock = hasStock
+    def check(productsToCheck: Seq[Product]): Unit = {
+        val tryIsInStock = hasStock(productsToCheck)
 
         tryIsInStock match {
             case Failure(exception) => {
@@ -32,9 +42,9 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
         println("-------------------------------")
     }
 
-    private def hasStock: Try[Option[String]] = Try {
+    private def hasStock(productsToCheck: Seq[Product]): Try[Option[String]] = Try {
 
-        val productsInStock: Seq[Product] = products.flatMap(product => {
+        val productsInStock: Seq[Product] = productsToCheck.flatMap(product => {
             print(s"Checking for ${product.name}...")
 
             val doc = jsoupWrapper.connectAndGet(product.url)

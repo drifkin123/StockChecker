@@ -6,6 +6,7 @@ import org.jsoup.select.Elements
 trait Product {
     val name: String
     val url: String
+    val company: String
 
     def isInStock(doc: Document): Boolean
 
@@ -16,7 +17,8 @@ trait Product {
 
 class BestBuyProduct(
   val name: String,
-  val url: String
+  val url: String,
+  val company: String = "bestbuy"
 ) extends Product {
     val cssSelector: String = "button.add-to-cart-button"
     val textComparator: String = "Add to Cart"
@@ -29,7 +31,8 @@ class BestBuyProduct(
 
 class NeweggProduct(
   val name: String,
-  val url: String
+  val url: String,
+  val company: String = "newegg"
 ) extends Product {
     override def isInStock(doc: Document): Boolean = {
         val stockElements = doc.select("#ProductBuy button.btn-primary")
@@ -40,7 +43,8 @@ class NeweggProduct(
 
 class EvgaProduct(
   val name: String,
-  val url: String
+  val url: String,
+  val company: String = "evga"
 ) extends Product {
     override def isInStock(doc: Document): Boolean = {
         val stockElements = doc.select("#LFrame_btnAddToCart span")

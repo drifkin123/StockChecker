@@ -47,7 +47,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         val expectedMessage = "stuff2 is in stock!\n\nhttps://www.example.com/some/other/stuff2"
 
         // when
-        fixture.stockChecker.check()
+        fixture.stockChecker.check(products)
 
         // then
         fixture.fakeMessenger.messageSent shouldBe expectedMessage
@@ -79,7 +79,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
             "\n\nhttps://www.example.com/some/other/stuff2"
 
         // when
-        fixture.stockChecker.check()
+        fixture.stockChecker.check(products)
 
         // then
         fixture.fakeMessenger.messageSent shouldBe expectedMessage
@@ -110,7 +110,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         val expectedMessage = ""
 
         // when
-        fixture.stockChecker.check()
+        fixture.stockChecker.check(products)
 
         // then
         fixture.fakeMessenger.messageSent shouldBe expectedMessage
@@ -140,7 +140,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         val fixture = createFixture(products, createUrlToDocument(), throwException = true)
 
         // when
-        fixture.stockChecker.check()
+        fixture.stockChecker.check(products)
 
         // then
         fixture.fakeMessenger.messageSent shouldBe ""
@@ -167,7 +167,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         val fixture = createFixture(products, urlToDocumentMap)
 
         // when
-        fixture.stockChecker.check()
+        fixture.stockChecker.check(products)
 
         // then
         fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock!\n\n${neweggUrlInStock}"
@@ -194,7 +194,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         val fixture = createFixture(products, urlToDocumentMap)
 
         // when
-        fixture.stockChecker.check()
+        fixture.stockChecker.check(products)
 
         // then
         fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock!\n\n${evgaUrlInStock}"
