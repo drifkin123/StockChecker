@@ -31,12 +31,20 @@ class NeweggProduct(
   val name: String,
   val url: String
 ) extends Product {
-    override def isInStock(doc: Document): Boolean = ???
+    override def isInStock(doc: Document): Boolean = {
+        val stockElements = doc.select("#ProductBuy button.btn-primary")
+        val stockText = if (stockElements.size() > 0) stockElements.first().text() else ""
+        "add to cart" == stockText.trim.toLowerCase
+    }
 }
 
 class EvgaProduct(
   val name: String,
   val url: String
 ) extends Product {
-    override def isInStock(doc: Document): Boolean = ???
+    override def isInStock(doc: Document): Boolean = {
+        val stockElements = doc.select("#LFrame_btnAddToCart span")
+        val stockText = if (stockElements.size() > 0) stockElements.first().text() else ""
+        "add to cart" == stockText.trim.toLowerCase
+    }
 }

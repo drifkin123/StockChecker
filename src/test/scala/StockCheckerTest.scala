@@ -1,5 +1,5 @@
 import Messenger.Messenger
-import domain.BestBuyProduct
+import domain.{BestBuyProduct, EvgaProduct, NeweggProduct, Product}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.funsuite.AnyFunSuite
@@ -10,23 +10,9 @@ import scala.io.{BufferedSource, Source}
 
 class StockCheckerTest extends AnyFunSuite with Matchers {
 
-    def createFixture(itemsInStock: Map[String, Boolean], throwException: Boolean = false) = {
+    def createFixture(products: Seq[Product], urlToDocumentMap: Map[String, Document], throwException: Boolean = false) = {
         new {
-            def getDocumentForStockStatus(inStock: Boolean): Document = {
-                if (inStock) createDocumentFromHtml("/documents/bestBuyInStock.html") else createDocumentFromHtml("/documents/bestBuyOutOfStock.html")
-            }
-
-            def createUrlToDocument(): Map[String, Document] = Map(
-                "https://www.example.com/some/other/stuff1" -> getDocumentForStockStatus(itemsInStock("stuff1")),
-                "https://www.example.com/some/other/stuff2" -> getDocumentForStockStatus(itemsInStock("stuff2"))
-            )
-
-            val products = Seq(
-                new BestBuyProduct("stuff1", "https://www.example.com/some/other/stuff1"),
-                new BestBuyProduct("stuff2", "https://www.example.com/some/other/stuff2")
-            )
-
-            val fakeJsoup = new FakeJsoup(createUrlToDocument(), throwException)
+            val fakeJsoup = new FakeJsoup(urlToDocumentMap, throwException)
 
             val fakeMessenger = new FakeMessenger
             val stockChecker = new StockChecker(fakeMessenger, fakeJsoup, products)
@@ -41,7 +27,22 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
             "stuff1" -> false,
             "stuff2" -> true
         )
-        val fixture = createFixture(itemsInStock)
+
+        def getDocumentForStockStatus(inStock: Boolean): Document = {
+            if (inStock) createDocumentFromHtml("/documents/bestBuyInStock.html") else createDocumentFromHtml("/documents/bestBuyOutOfStock.html")
+        }
+
+        def createUrlToDocument(): Map[String, Document] = Map(
+            "https://www.example.com/some/other/stuff1" -> getDocumentForStockStatus(itemsInStock("stuff1")),
+            "https://www.example.com/some/other/stuff2" -> getDocumentForStockStatus(itemsInStock("stuff2"))
+        )
+
+        val products = Seq(
+            new BestBuyProduct("stuff1", "https://www.example.com/some/other/stuff1"),
+            new BestBuyProduct("stuff2", "https://www.example.com/some/other/stuff2")
+        )
+
+        val fixture = createFixture(products, createUrlToDocument())
 
         val expectedMessage = "stuff2 is in stock!\n\nhttps://www.example.com/some/other/stuff2"
 
@@ -59,7 +60,21 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
             "stuff2" -> true
         )
 
-        val fixture = createFixture(itemsInStock)
+        def getDocumentForStockStatus(inStock: Boolean): Document = {
+            if (inStock) createDocumentFromHtml("/documents/bestBuyInStock.html") else createDocumentFromHtml("/documents/bestBuyOutOfStock.html")
+        }
+
+        def createUrlToDocument(): Map[String, Document] = Map(
+            "https://www.example.com/some/other/stuff1" -> getDocumentForStockStatus(itemsInStock("stuff1")),
+            "https://www.example.com/some/other/stuff2" -> getDocumentForStockStatus(itemsInStock("stuff2"))
+        )
+
+        val products = Seq(
+            new BestBuyProduct("stuff1", "https://www.example.com/some/other/stuff1"),
+            new BestBuyProduct("stuff2", "https://www.example.com/some/other/stuff2")
+        )
+
+        val fixture = createFixture(products, createUrlToDocument())
         val expectedMessage = "stuff1 and stuff2 are in stock!\n\nhttps://www.example.com/some/other/stuff1" +
             "\n\nhttps://www.example.com/some/other/stuff2"
 
@@ -77,7 +92,21 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
             "stuff2" -> false
         )
 
-        val fixture = createFixture(itemsInStock)
+        def getDocumentForStockStatus(inStock: Boolean): Document = {
+            if (inStock) createDocumentFromHtml("/documents/bestBuyInStock.html") else createDocumentFromHtml("/documents/bestBuyOutOfStock.html")
+        }
+
+        def createUrlToDocument(): Map[String, Document] = Map(
+            "https://www.example.com/some/other/stuff1" -> getDocumentForStockStatus(itemsInStock("stuff1")),
+            "https://www.example.com/some/other/stuff2" -> getDocumentForStockStatus(itemsInStock("stuff2"))
+        )
+
+        val products = Seq(
+            new BestBuyProduct("stuff1", "https://www.example.com/some/other/stuff1"),
+            new BestBuyProduct("stuff2", "https://www.example.com/some/other/stuff2")
+        )
+
+        val fixture = createFixture(products, createUrlToDocument())
         val expectedMessage = ""
 
         // when
@@ -94,13 +123,81 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
             "stuff2" -> false
         )
 
-        val fixture = createFixture(itemsInStock, throwException = true)
+        def getDocumentForStockStatus(inStock: Boolean): Document = {
+            if (inStock) createDocumentFromHtml("/documents/bestBuyInStock.html") else createDocumentFromHtml("/documents/bestBuyOutOfStock.html")
+        }
+
+        def createUrlToDocument(): Map[String, Document] = Map(
+            "https://www.example.com/some/other/stuff1" -> getDocumentForStockStatus(itemsInStock("stuff1")),
+            "https://www.example.com/some/other/stuff2" -> getDocumentForStockStatus(itemsInStock("stuff2"))
+        )
+
+        val products = Seq(
+            new BestBuyProduct("stuff1", "https://www.example.com/some/other/stuff1"),
+            new BestBuyProduct("stuff2", "https://www.example.com/some/other/stuff2")
+        )
+
+        val fixture = createFixture(products, createUrlToDocument(), throwException = true)
 
         // when
         fixture.stockChecker.check()
 
         // then
         fixture.fakeMessenger.messageSent shouldBe ""
+    }
+
+    test("Check newegg stock") {
+        // given
+        val neweggUrlInStock = "https://newegg.com/stuffInStock"
+        val neweggUrlNotInStock = "https://newegg.com/stuffNotInStock"
+
+        val neweggDocInStock = createDocumentFromHtml("/documents/neweggInStock.html")
+        val neweggDocNotInStock = createDocumentFromHtml("/documents/neweggOutOfStock.html")
+
+        val urlToDocumentMap = Map(
+            neweggUrlInStock -> neweggDocInStock,
+            neweggUrlNotInStock -> neweggDocNotInStock
+        )
+
+        val products: Seq[Product] = Seq(
+            new NeweggProduct("stuffInStock", neweggUrlInStock),
+            new NeweggProduct("stuffNotInStock", neweggUrlNotInStock)
+        )
+
+        val fixture = createFixture(products, urlToDocumentMap)
+
+        // when
+        fixture.stockChecker.check()
+
+        // then
+        fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock!\n\n${neweggUrlInStock}"
+    }
+
+    test("Check evga stock") {
+        // given
+        val evgaUrlInStock = "https://evga.com/stuffInStock"
+        val evgaUrlNotInStock = "https://evga.com/stuffNotInStock"
+
+        val evgaDocInStock = createDocumentFromHtml("/documents/evgaInStock.html")
+        val evgaDocNotInStock = createDocumentFromHtml("/documents/evgaOutOfStock.html")
+
+        val urlToDocumentMap = Map(
+            evgaUrlInStock -> evgaDocInStock,
+            evgaUrlNotInStock -> evgaDocNotInStock
+        )
+
+        val products: Seq[Product] = Seq(
+            new EvgaProduct("stuffInStock", evgaUrlInStock),
+            new EvgaProduct("stuffNotInStock", evgaUrlNotInStock)
+        )
+
+        val fixture = createFixture(products, urlToDocumentMap)
+
+        // when
+        fixture.stockChecker.check()
+
+        // then
+        fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock!\n\n${evgaUrlInStock}"
     }
 
     class FakeMessenger extends Messenger {
