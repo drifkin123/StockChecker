@@ -1,4 +1,4 @@
-import domain.{BestBuyProduct, Product}
+import domain.{BestBuyProduct, EvgaProduct, NeweggProduct, Product}
 
 import scala.io.Source
 
@@ -19,6 +19,8 @@ object ProductGenerator {
 
             domainName match {
                 case "bestbuy" => products = products.+:(new BestBuyProduct(productName, productUrl))
+                case "newegg" => products = products.+:(new NeweggProduct(productName, productUrl))
+                case "evga" => products = products.+:(new EvgaProduct(productName, productUrl))
             }
         }
 
