@@ -38,19 +38,16 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
             }
             case Success(maybeMessage) => maybeMessage.foreach(messenger.sendMessage)
         }
-
-        println("-------------------------------")
     }
 
     private def hasStock(productsToCheck: Seq[Product]): Try[Option[String]] = Try {
 
         val productsInStock: Seq[Product] = productsToCheck.flatMap(product => {
+            val randomTime = r.nextLong(MAX_SLEEP_TIME_BETWEEN_REQUESTS) + MIN_SLEEP_TIME_BETWEEN_REQUESTS
+            Thread.sleep(randomTime)
             print(s"Checking for ${product.name}...")
 
             val doc = jsoupWrapper.connectAndGet(product.url)
-
-            val randomTime = r.nextLong(MAX_SLEEP_TIME_BETWEEN_REQUESTS) + MIN_SLEEP_TIME_BETWEEN_REQUESTS
-            Thread.sleep(randomTime)
 
             if (product.isInStock(doc)) {
                 println(s"${Console.GREEN} ITS IN STOCK!! CHECK YOUR PHONE!!${Console.RESET}")
