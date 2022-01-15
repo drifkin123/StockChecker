@@ -21,11 +21,11 @@ class BestBuyProduct(
   val company: String = "bestbuy"
 ) extends Product {
     val cssSelector: String = "button.add-to-cart-button"
-    val textComparator: String = "Add to Cart"
+    val textComparator: String = "add to cart"
 
     override def isInStock(doc: Document): Boolean = {
         val buttons: Elements = doc.select(cssSelector)
-        buttons.size() > 0 && buttons.first().text() == textComparator
+        buttons.size() > 0 && buttons.first().text().trim.toLowerCase().contains(textComparator)
     }
 }
 

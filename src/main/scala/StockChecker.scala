@@ -33,16 +33,14 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
         tryIsInStock match {
             case Failure(exception) => {
                 println(s"Failed checking stock: ${exception.getMessage}\nWaiting 5 seconds")
-
                 Thread.sleep(5000L)
             }
-            case Success(maybeMessage) => maybeMessage.foreach(messenger.sendMessage)
+            case Success(_) => ()
         }
     }
 
-    private def hasStock(productsToCheck: Seq[Product]): Try[Option[String]] = Try {
-
-        val productsInStock: Seq[Product] = productsToCheck.flatMap(product => {
+    private def hasStock(productsToCheck: Seq[Product]): Try[Unit] = Try {
+        productsToCheck.foreach(product => {
             val randomTime = r.nextLong(MAX_SLEEP_TIME_BETWEEN_REQUESTS) + MIN_SLEEP_TIME_BETWEEN_REQUESTS
             Thread.sleep(randomTime)
             print(s"Checking for ${product.name}...")
@@ -50,25 +48,11 @@ class StockChecker(messenger: Messenger, jsoupWrapper: JsoupWrapper, products: S
             val doc = jsoupWrapper.connectAndGet(product.url)
 
             if (product.isInStock(doc)) {
-                println(s"${Console.GREEN} ITS IN STOCK!! CHECK YOUR PHONE!!${Console.RESET}")
-                Some(product)
+                println(s"✔️")
+                messenger.sendMessage(s"${product.name} is in stock at ${product.company}: ${product.url}")
             } else {
                 println(s"❌")
-                None
             }
         })
-
-
-        if (productsInStock.nonEmpty) {
-            val productNamesInStock = productsInStock
-                .map(_.name)
-                .mkString(" and ") + s" ${if (productsInStock.length > 1) "are" else "is"} in stock!"
-
-            val urlsInStock = productsInStock.map(product => s"\n\n${product.url}").mkString("")
-
-            Some(productNamesInStock + urlsInStock)
-        } else {
-            None
-        }
     }
 }

@@ -44,7 +44,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
 
         val fixture = createFixture(products, createUrlToDocument())
 
-        val expectedMessage = "stuff2 is in stock!\n\nhttps://www.example.com/some/other/stuff2"
+        val expectedMessage = "stuff2 is in stock at bestbuy: https://www.example.com/some/other/stuff2"
 
         // when
         fixture.stockChecker.check(products)
@@ -75,8 +75,8 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         )
 
         val fixture = createFixture(products, createUrlToDocument())
-        val expectedMessage = "stuff1 and stuff2 are in stock!\n\nhttps://www.example.com/some/other/stuff1" +
-            "\n\nhttps://www.example.com/some/other/stuff2"
+        val expectedMessage = "stuff1 is in stock at bestbuy: https://www.example.com/some/other/stuff1" +
+          "stuff2 is in stock at bestbuy: https://www.example.com/some/other/stuff2"
 
         // when
         fixture.stockChecker.check(products)
@@ -170,7 +170,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         fixture.stockChecker.check(products)
 
         // then
-        fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock!\n\n${neweggUrlInStock}"
+        fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock at newegg: ${neweggUrlInStock}"
     }
 
     test("Check evga stock") {
@@ -197,7 +197,7 @@ class StockCheckerTest extends AnyFunSuite with Matchers {
         fixture.stockChecker.check(products)
 
         // then
-        fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock!\n\n${evgaUrlInStock}"
+        fixture.fakeMessenger.messageSent shouldBe s"stuffInStock is in stock at evga: ${evgaUrlInStock}"
     }
 
     class FakeMessenger extends Messenger {
